@@ -8,6 +8,8 @@ import { Component, OnInit } from '@angular/core';
 export class PostCreateComponent implements OnInit {
   /** Text inputed in the text area. */
   public new_post = 'No content';
+  /** Text inclided in the text arae. */
+  public entered_value = '';
 
   /**
    * Constructor de la clase
@@ -23,6 +25,6 @@ export class PostCreateComponent implements OnInit {
    * Se llama cuando se hace click en el botón de guardar.
    */
   public onAddPost() {
-    this.new_post = "The user's post";
+    this.new_post = this.entered_value;
   }
 }
