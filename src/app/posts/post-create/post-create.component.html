@@ -1,3 +1,4 @@
-<textarea rows="6"></textarea>
+<textarea rows="6" [value]="this.new_post"></textarea>
 <hr />
 <button (click)="onAddPost()">Save post</button>
+<p>{{ this.new_post }}</p>
