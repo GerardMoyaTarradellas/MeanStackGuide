@@ -1,4 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
 import { Post } from '../post.interface';
 
@@ -8,10 +9,6 @@ import { Post } from '../post.interface';
   styleUrls: ['./post-create.component.css'],
 })
 export class PostCreateComponent implements OnInit {
-  /** New content of the post. */
-  public new_content = '';
-  /** New title of the post. */
-  public new_title = '';
   /** Se ejecuta cuando se ha generado un nuevo post. */
   @Output() public post_created: EventEmitter<Post> = new EventEmitter();
 
@@ -28,10 +25,14 @@ export class PostCreateComponent implements OnInit {
   /**
    * Se llama cuando se hace click en el botón de guardar.
    */
-  public onAddPost() {
+  public onAddPost(form: NgForm) {
+    if (form.invalid) {
+      return;
+    }
+
     const new_post: Post = {
-      title: this.new_title,
-      content: this.new_content,
+      title: form.value.title,
+      content: form.value.content,
     };
 
     this.post_created.emit(new_post);

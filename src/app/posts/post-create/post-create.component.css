@@ -3,7 +3,10 @@
   margin-top: 16px;
 }
 
-mat-form-field,
-textarea {
+mat-form-field {
   width: 100%;
+}
+
+button {
+  margin-top: 16px;
 }
