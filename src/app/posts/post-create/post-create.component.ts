@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Post } from '../post.interface';
 
 @Component({
   selector: 'app-post-create',
@@ -6,10 +7,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./post-create.component.css'],
 })
 export class PostCreateComponent implements OnInit {
-  /** Text inputed in the text area. */
-  public new_post = 'No content';
-  /** Text inclided in the text arae. */
-  public entered_value = '';
+  /** New content of the post. */
+  public new_content = '';
+  /** New title of the post. */
+  public new_title = '';
+  /** Se ejecuta cuando se ha generado un nuevo post. */
+  @Output() public post_created: EventEmitter<Post> = new EventEmitter();
 
   /**
    * Constructor de la clase
@@ -25,6 +28,11 @@ export class PostCreateComponent implements OnInit {
    * Se llama cuando se hace click en el botón de guardar.
    */
   public onAddPost() {
-    this.new_post = this.entered_value;
+    const new_post: Post = {
+      title: this.new_title,
+      content: this.new_content,
+    };
+
+    this.post_created.emit(new_post);
   }
 }

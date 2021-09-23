@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 import { Post } from '../post.interface';
 
@@ -9,7 +9,7 @@ import { Post } from '../post.interface';
 })
 export class PostListComponent implements OnInit {
   /** Lista de posts utilizados en el componente. */
-  public posts: Post[] = [];
+  @Input() public posts: Post[];
 
   /**
    * Constructor de la clase
