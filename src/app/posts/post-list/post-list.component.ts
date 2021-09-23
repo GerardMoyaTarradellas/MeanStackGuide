@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
+import { Post } from '../post.interface';
+
 @Component({
   selector: 'app-post-list',
   templateUrl: './post-list.component.html',
@@ -7,20 +9,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PostListComponent implements OnInit {
   /** Lista de posts utilizados en el componente. */
-  public post = [
-    {
-      title: 'Titol',
-      content: 'Contingut',
-    },
-    {
-      title: 'Titol',
-      content: 'Contingut',
-    },
-    {
-      title: 'Titol',
-      content: 'Contingut',
-    },
-  ];
+  public posts: Post[] = [];
 
   /**
    * Constructor de la clase
