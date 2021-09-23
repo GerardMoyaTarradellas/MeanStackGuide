@@ -1,4 +1,6 @@
 export interface Post {
-    title: string;
-    content:string;
+  /** Titulo del post. */
+  title: string;
+  /** Contenido del post. */
+  content: string;
 }
