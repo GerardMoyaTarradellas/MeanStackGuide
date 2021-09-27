@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
 import { Post } from '../post.interface';
+import { PostService } from '../post.service';
 
 @Component({
   selector: 'app-post-create',
@@ -9,13 +10,11 @@ import { Post } from '../post.interface';
   styleUrls: ['./post-create.component.css'],
 })
 export class PostCreateComponent implements OnInit {
-  /** Se ejecuta cuando se ha generado un nuevo post. */
-  @Output() public post_created: EventEmitter<Post> = new EventEmitter();
-
   /**
    * Constructor de la clase
+   * @param post_service Servicio de posts de la aplicación.
    */
-  constructor() {}
+  constructor(private post_service: PostService) {}
 
   /**
    * Se llama cada vez que el componente se inicializa
@@ -24,6 +23,7 @@ export class PostCreateComponent implements OnInit {
 
   /**
    * Se llama cuando se hace click en el botón de guardar.
+   * @param form Form con la información del nuevo post.
    */
   public onAddPost(form: NgForm) {
     if (form.invalid) {
@@ -35,6 +35,6 @@ export class PostCreateComponent implements OnInit {
       content: form.value.content,
     };
 
-    this.post_created.emit(new_post);
+    this.post_service.addPost(new_post);
   }
 }
