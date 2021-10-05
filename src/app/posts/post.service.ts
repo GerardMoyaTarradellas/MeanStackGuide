@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 
@@ -14,15 +15,23 @@ export class PostService {
 
   /**
    * Constructor del servicio.
+   * @param http_client Servicio http
    */
-  constructor() {}
+  constructor(private http_client: HttpClient) {}
 
   /**
    * Genera una copia de la lista de posts y la devuelve.
    * @returns Devuelve una array de posts.
    */
-  getPosts(): Post[] {
-    return [...this.posts];
+  getPosts() {
+    this.http_client
+      .get<{ message: string; posts: Post[] }>(
+        'http://localhost:3000/api/posts'
+      )
+      .subscribe((data) => {
+        this.posts = data.posts;
+        this.postsUpdated.next([...this.posts]);
+      });
   }
 
   /**
@@ -39,6 +48,6 @@ export class PostService {
    */
   addPost(new_post: Post): void {
     this.posts.push(new_post);
-    this.postsUpdated.next(this.getPosts());
+    this.postsUpdated.next([...this.posts]);
   }
 }
