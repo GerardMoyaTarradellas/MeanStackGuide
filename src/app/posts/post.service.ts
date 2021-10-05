@@ -47,7 +47,12 @@ export class PostService {
    * @param new_post Post que desea añadir.
    */
   addPost(new_post: Post): void {
-    this.posts.push(new_post);
-    this.postsUpdated.next([...this.posts]);
+    this.http_client
+      .post<{ message: string }>('http://localhost:3000/api/posts', new_post)
+      .subscribe((data) => {
+        console.log(data);
+        this.posts.push(new_post);
+        this.postsUpdated.next([...this.posts]);
+      });
   }
 }
