@@ -1,6 +1,10 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 
 const app = express();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use((request, response, next) => {
   response.setHeader("Access-Control-Allow-Origin", "*");
@@ -13,6 +17,13 @@ app.use((request, response, next) => {
     "GET, POST, PATCH, DELETE, OPTIONS"
   );
   next();
+});
+
+app.post("/api/posts", (request, response, next) => {
+  console.log(request.body);
+  response.status(201).json({
+    message: "Post created!",
+  });
 });
 
 app.use("/api/posts", (request, response, next) => {
