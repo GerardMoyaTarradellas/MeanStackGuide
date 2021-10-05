@@ -11,7 +11,7 @@ import { PostService } from '../post.service';
 })
 export class PostListComponent implements OnInit, OnDestroy {
   /** Lista de posts utilizados en el componente. */
-  public posts: Post[];
+  public posts: Post[] = [];
 
   /** Subscripción a los posts. */
   private posts_subscription: Subscription;

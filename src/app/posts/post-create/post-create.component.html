@@ -8,6 +8,7 @@
         type="text"
         ngModel
         #formTitle="ngModel"
+        placeholder="Titulo"
       />
       <mat-error *ngIf="formTitle.invalid">Introduzca un título</mat-error>
     </mat-form-field>
@@ -19,6 +20,7 @@
         type="text"
         ngModel
         #formContent="ngModel"
+        placeholder="Contenido"
       />
       <mat-error *ngIf="formContent.invalid"
         >Introduzca un contenido a guardar</mat-error
