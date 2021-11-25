@@ -3,11 +3,11 @@
     <mat-expansion-panel-header> {{ post.title }} </mat-expansion-panel-header>
     <p>{{ post.content }}</p>
     <mat-action-row>
-      <button mat-raised-button color="primary">EDIT</button>
-      <button mat-raised-button color="warn">DELETE</button>
+      <button mat-raised-button color="primary">EDITAR</button>
+      <button mat-raised-button color="warn">ELIMINAR</button>
     </mat-action-row>
   </mat-expansion-panel>
 </mat-accordion>
 <p class="info-text mat-body-1" *ngIf="this.posts.length < 1">
-  No post added yet
+  No se ha generado ningun post
 </p>
