@@ -1,14 +1,24 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 const Post = require("./models/post");
 
 const app = express();
 
+mongoose
+  .connect(
+    "mongodb+srv://gerard:rPwswr21jZVN536A@cluster0.jcdal.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+  )
+  .then(() => {
+    console.log("Conectado a mongo!");
+  })
+  .catch(() => {
+    console.log("No connectado a mongo", {});
+  });
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
-//rPwswr21jZVN536A;
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
