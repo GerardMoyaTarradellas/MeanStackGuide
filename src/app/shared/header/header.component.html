@@ -1,11 +1,11 @@
 <mat-toolbar color="primary">
-  <span>Mis posts</span>
+  <span>
+    <a routerLink="/">Mis posts</a>
+  </span>
+  <span class="spacer"></span>
   <ul>
     <li>
-      <a routerLink="/">Lista</a>
-    </li>
-    <li>
-      <a routerLink="/create">Crear</a>
+      <a mat-button routerLink="/create" routerLinkActive="mat-accent">Crear</a>
     </li>
   </ul>
 </mat-toolbar>
