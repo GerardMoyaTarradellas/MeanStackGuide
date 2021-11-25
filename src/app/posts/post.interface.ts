@@ -1,3 +1,4 @@
+/** Interfaz del `Post` */
 export interface Post {
   /** Id del post. */
   _id: number;
