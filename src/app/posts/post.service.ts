@@ -21,6 +21,14 @@ export class PostService {
   constructor(private http_client: HttpClient) {}
 
   /**
+   * Devuelve el post con el id introducido.
+   * @param id Id del post que se quiere obtener.
+   */
+  public getPost(id: string): Post {
+    return { ...this.posts.find((post) => post.id == id) };
+  }
+
+  /**
    * Genera una copia de la lista de posts y la devuelve.
    * @returns Devuelve una array de posts.
    */
@@ -89,5 +97,20 @@ export class PostService {
       title: post.title,
       content: post.content,
     };
+  }
+
+  /**
+   * Permite modificar un post existente en la db
+   * @param post Post que se ha modificado.
+   */
+  public updatePost(post: Post): void {
+    this.http_client
+      .put<{ message: string; post: any }>(
+        'http://localhost:3000/api/posts/' + post.id,
+        post
+      )
+      .subscribe((response) => {
+        console.log(response);
+      });
   }
 }

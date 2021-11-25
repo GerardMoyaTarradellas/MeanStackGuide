@@ -1,5 +1,6 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 
 import { Post } from '../post.interface';
 import { PostService } from '../post.service';
@@ -10,33 +11,55 @@ import { PostService } from '../post.service';
   styleUrls: ['./post-create.component.css'],
 })
 export class PostCreateComponent implements OnInit {
+  /** Modo del componente. */
+  private mode: 'creation' | 'edition';
+  /** Id del post que se edita */
+  public post: Post;
+
   /**
    * Constructor de la clase
    * @param post_service Servicio de posts de la aplicación.
+   * @param router Router de la aplicación
    */
-  constructor(private post_service: PostService) {}
+  constructor(
+    private post_service: PostService,
+    public router: ActivatedRoute
+  ) {}
 
   /**
    * Se llama cada vez que el componente se inicializa
    */
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.router.paramMap.subscribe((param_map: ParamMap) => {
+      if (param_map.has('id')) {
+        this.mode = 'edition';
+        this.post = this.post_service.getPost(param_map.get('id'));
+      } else {
+        this.mode = 'creation';
+      }
+    });
+  }
 
   /**
    * Se llama cuando se hace click en el botón de guardar.
    * @param form Form con la información del nuevo post.
    */
-  public onAddPost(form: NgForm) {
+  public onSavePost(form: NgForm) {
     if (form.invalid) {
       return;
     }
 
-    const new_post: Post = {
-      id: 0,
-      title: form.value.title,
-      content: form.value.content,
-    };
+    if (this.mode == 'creation') {
+      const new_post: Post = {
+        id: '0',
+        title: form.value.title,
+        content: form.value.content,
+      };
 
-    this.post_service.addPost(new_post);
-    form.resetForm();
+      this.post_service.addPost(new_post);
+      form.resetForm();
+    } else {
+      this.post_service.updatePost(this.post);
+    }
   }
 }

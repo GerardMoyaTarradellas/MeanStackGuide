@@ -1,7 +1,7 @@
 /** Interfaz del `Post` */
 export interface Post {
   /** Id del post. */
-  id: number;
+  id: string;
   /** Titulo del post. */
   title: string;
   /** Contenido del post. */
