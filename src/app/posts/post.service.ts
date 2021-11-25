@@ -29,13 +29,7 @@ export class PostService {
       .get<{ message: string; posts: any[] }>('http://localhost:3000/api/posts')
       .pipe(
         map((data) => {
-          return data.posts.map((post) => {
-            return {
-              id: post._id,
-              title: post.title,
-              content: post.content,
-            };
-          });
+          return data.posts.map((post) => this.mapServerPost(post));
         })
       )
       .subscribe((posts) => {
@@ -58,10 +52,12 @@ export class PostService {
    */
   public addPost(new_post: Post): void {
     this.http_client
-      .post<{ message: string }>('http://localhost:3000/api/posts', new_post)
+      .post<{ message: string; post: any }>(
+        'http://localhost:3000/api/posts',
+        new_post
+      )
       .subscribe((data) => {
-        console.log(data);
-        this.posts.push(new_post);
+        this.posts.push(this.mapServerPost(data.post));
         this.postsUpdated.next([...this.posts]);
       });
   }
@@ -80,5 +76,18 @@ export class PostService {
         this.posts = new_posts;
         this.postsUpdated.next([...this.posts]);
       });
+  }
+
+  /**
+   * Mapea la estructura de posts de la db con la del front.
+   * @param post Post de la db
+   * @returns Devuelve un post con la estructura del front.
+   */
+  private mapServerPost(post: any): Post {
+    return {
+      id: post._id,
+      title: post.title,
+      content: post.content,
+    };
   }
 }
