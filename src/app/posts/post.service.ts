@@ -73,6 +73,12 @@ export class PostService {
   public deleteOne(post: Post): void {
     this.http_client
       .delete<{ message: string }>('http://localhost:3000/api/posts/' + post.id)
-      .subscribe();
+      .subscribe(() => {
+        const new_posts = this.posts.filter(
+          (existing_post) => existing_post.id != post.id
+        );
+        this.posts = new_posts;
+        this.postsUpdated.next([...this.posts]);
+      });
   }
 }
