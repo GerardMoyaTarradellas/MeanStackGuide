@@ -8,7 +8,7 @@ const app = express();
 
 mongoose
   .connect(
-    "mongodb+srv://gerard:rPwswr21jZVN536A@cluster0.jcdal.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+    "mongodb+srv://gerard:rPwswr21jZVN536A@cluster0.jcdal.mongodb.net/mean-course?retryWrites=true&w=majority"
   )
   .then(() => {
     console.log("Conectado a mongo!");
@@ -38,7 +38,7 @@ app.post("/api/posts", (req, res, next) => {
     title: req.body.title,
     content: req.body.content,
   });
-  console.log(post);
+  post.save();
   res.status(201).json({
     message: "Post creado!",
   });
