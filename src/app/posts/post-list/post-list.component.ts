@@ -12,6 +12,8 @@ import { PostService } from '../post.service';
 export class PostListComponent implements OnInit, OnDestroy {
   /** Lista de posts utilizados en el componente. */
   public posts: Post[] = [];
+  /** Define si el componente esta cargando o no. */
+  public is_loading: boolean = false;
 
   /** Subscripción a los posts. */
   private posts_subscription: Subscription;
@@ -26,11 +28,13 @@ export class PostListComponent implements OnInit, OnDestroy {
    * Se llama cada vez que el componente se inicializa
    */
   ngOnInit(): void {
+    this.is_loading = true;
     this.post_service.getPosts();
     this.posts_subscription = this.post_service
       .getPostUpdateListener()
       .subscribe((new_posts) => {
         this.posts = new_posts;
+        this.is_loading = false;
       });
   }
 

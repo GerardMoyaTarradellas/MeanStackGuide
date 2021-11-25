@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { stringify } from '@angular/compiler/src/util';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
@@ -18,8 +19,9 @@ export class PostService {
   /**
    * Constructor del servicio.
    * @param http_client Servicio http
+   * @param router Router de la aplicación.
    */
-  constructor(private http_client: HttpClient) {}
+  constructor(private http_client: HttpClient, private router: Router) {}
 
   /**
    * Devuelve el post con el id introducido.
@@ -80,6 +82,7 @@ export class PostService {
       .subscribe((data) => {
         this.posts.push(this.mapServerPost(data.post));
         this.postsUpdated.next([...this.posts]);
+        this.router.navigate(['/']);
       });
   }
 
@@ -130,6 +133,7 @@ export class PostService {
         this.posts[old_index] = post;
         this.posts = posts_updated;
         this.postsUpdated.next([...this.posts]);
+        this.router.navigate(['/']);
       });
   }
 }

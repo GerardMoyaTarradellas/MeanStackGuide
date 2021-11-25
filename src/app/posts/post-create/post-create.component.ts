@@ -13,6 +13,8 @@ import { PostService } from '../post.service';
 export class PostCreateComponent implements OnInit {
   /** Modo del componente. */
   private mode: 'creation' | 'edition';
+  /** Define si el componente esta cargando o no. */
+  public is_loading: boolean = false;
   /** Id del post que se edita */
   public post: Post;
 
@@ -32,6 +34,7 @@ export class PostCreateComponent implements OnInit {
   ngOnInit(): void {
     this.router.paramMap.subscribe((param_map: ParamMap) => {
       if (param_map.has('id')) {
+        this.is_loading = true;
         this.mode = 'edition';
         this.post_service.getPost(param_map.get('id')).subscribe((response) => {
           if (response) {
@@ -39,6 +42,7 @@ export class PostCreateComponent implements OnInit {
           } else {
             this.mode = 'creation';
           }
+          this.is_loading = false;
         });
       } else {
         this.mode = 'creation';
@@ -55,6 +59,7 @@ export class PostCreateComponent implements OnInit {
       return;
     }
 
+    this.is_loading = true;
     if (this.mode == 'creation') {
       const new_post: Post = {
         id: '0',

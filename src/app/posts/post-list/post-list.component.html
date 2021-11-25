@@ -1,4 +1,8 @@
-<mat-accordion multi="true" *ngIf="this.posts.length > 0">
+<mat-spinner *ngIf="is_loading"></mat-spinner>
+<mat-accordion
+  multi="true"
+  *ngIf="this.posts.length > 0 && is_loading == false"
+>
   <mat-expansion-panel *ngFor="let post of this.posts">
     <mat-expansion-panel-header> {{ post.title }} </mat-expansion-panel-header>
     <p>{{ post.content }}</p>
@@ -12,6 +16,9 @@
     </mat-action-row>
   </mat-expansion-panel>
 </mat-accordion>
-<p class="info-text mat-body-1" *ngIf="this.posts.length < 1">
+<p
+  class="info-text mat-body-1"
+  *ngIf="this.posts.length < 1 && is_loading == false"
+>
   No se ha generado ningun post
 </p>
