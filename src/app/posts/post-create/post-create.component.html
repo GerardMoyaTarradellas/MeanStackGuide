@@ -6,7 +6,7 @@
         name="title"
         required
         type="text"
-        [ngModel]="post.title"
+        [ngModel]="post?.title"
         #formTitle="ngModel"
         placeholder="Titulo"
       />
@@ -18,7 +18,7 @@
         name="content"
         required
         type="text"
-        [ngModel]="post.content"
+        [ngModel]="post?.content"
         #formContent="ngModel"
         placeholder="Contenido"
       />

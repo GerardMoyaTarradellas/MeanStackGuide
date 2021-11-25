@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
+import { stringify } from '@angular/compiler/src/util';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 import { Post } from './post.interface';
 
@@ -24,8 +25,20 @@ export class PostService {
    * Devuelve el post con el id introducido.
    * @param id Id del post que se quiere obtener.
    */
-  public getPost(id: string): Post {
-    return { ...this.posts.find((post) => post.id == id) };
+  public getPost(id: string): Observable<Post | undefined> {
+    return this.http_client
+      .get<{ message: string; post: any }>(
+        'http://localhost:3000/api/posts/' + id
+      )
+      .pipe(
+        map((response: any) => {
+          if (response.post) {
+            return this.mapServerPost(response.post);
+          } else {
+            return undefined;
+          }
+        })
+      );
   }
 
   /**
@@ -109,8 +122,14 @@ export class PostService {
         'http://localhost:3000/api/posts/' + post.id,
         post
       )
-      .subscribe((response) => {
-        console.log(response);
+      .subscribe(() => {
+        const posts_updated = [...this.posts];
+        const old_index = this.posts.findIndex(
+          (existing_post) => existing_post.id == post.id
+        );
+        this.posts[old_index] = post;
+        this.posts = posts_updated;
+        this.postsUpdated.next([...this.posts]);
       });
   }
 }

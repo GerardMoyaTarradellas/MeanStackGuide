@@ -33,7 +33,13 @@ export class PostCreateComponent implements OnInit {
     this.router.paramMap.subscribe((param_map: ParamMap) => {
       if (param_map.has('id')) {
         this.mode = 'edition';
-        this.post = this.post_service.getPost(param_map.get('id'));
+        this.post_service.getPost(param_map.get('id')).subscribe((response) => {
+          if (response) {
+            this.post = response;
+          } else {
+            this.mode = 'creation';
+          }
+        });
       } else {
         this.mode = 'creation';
       }
