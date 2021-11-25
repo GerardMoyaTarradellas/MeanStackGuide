@@ -24,16 +24,14 @@ export class PostService {
    * Genera una copia de la lista de posts y la devuelve.
    * @returns Devuelve una array de posts.
    */
-  getPosts() {
+  public getPosts() {
     this.http_client
-      .get<{ message: string; posts: Post[] }>(
-        'http://localhost:3000/api/posts'
-      )
+      .get<{ message: string; posts: any[] }>('http://localhost:3000/api/posts')
       .pipe(
         map((data) => {
           return data.posts.map((post) => {
             return {
-              id: post.id,
+              id: post._id,
               title: post.title,
               content: post.content,
             };
@@ -50,7 +48,7 @@ export class PostService {
    * Permite lincarse al observable de posts.
    * @returns Devuelve el observable de los posts.
    */
-  getPostUpdateListener(): Observable<Post[]> {
+  public getPostUpdateListener(): Observable<Post[]> {
     return this.postsUpdated.asObservable();
   }
 
@@ -58,7 +56,7 @@ export class PostService {
    * Añade un nuevo post a la lista de posts.
    * @param new_post Post que desea añadir.
    */
-  addPost(new_post: Post): void {
+  public addPost(new_post: Post): void {
     this.http_client
       .post<{ message: string }>('http://localhost:3000/api/posts', new_post)
       .subscribe((data) => {
@@ -66,5 +64,15 @@ export class PostService {
         this.posts.push(new_post);
         this.postsUpdated.next([...this.posts]);
       });
+  }
+
+  /**
+   * Elimina el post introducido
+   * @param post Post que se desea eliminar.
+   */
+  public deleteOne(post: Post): void {
+    this.http_client
+      .delete<{ message: string }>('http://localhost:3000/api/posts/' + post.id)
+      .subscribe();
   }
 }
