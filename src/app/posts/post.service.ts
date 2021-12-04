@@ -1,10 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { stringify } from '@angular/compiler/src/util';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { PostListComponent } from './post-list/post-list.component';
+import { map } from 'rxjs/operators';
 
 import { Post } from './post.interface';
 
@@ -15,7 +13,8 @@ export class PostService {
   /** Lista de todos los posts. */
   private posts: Post[] = [];
   /** Genera un observable cada vez que se añade un nuevo post. */
-  private postsUpdated: Subject<Post[]> = new Subject<Post[]>();
+  private postsUpdated: Subject<{ posts: Post[]; max_posts: number }> =
+    new Subject<{ posts: Post[]; max_posts: number }>();
 
   /**
    * Constructor del servicio.
@@ -53,17 +52,23 @@ export class PostService {
   public getPosts(page_size: number, current_page: number) {
     const query_params = `?page_size=${page_size}&page=${current_page}`;
     this.http_client
-      .get<{ message: string; posts: any[] }>(
+      .get<{ message: string; posts: any[]; max_posts: number }>(
         'http://localhost:3000/api/posts' + query_params
       )
       .pipe(
         map((data) => {
-          return data.posts.map((post) => this.mapServerPost(post));
+          return {
+            posts: data.posts.map((post) => this.mapServerPost(post)),
+            max_posts: data.max_posts,
+          };
         })
       )
-      .subscribe((posts) => {
-        this.posts = posts;
-        this.postsUpdated.next([...this.posts]);
+      .subscribe((response) => {
+        this.posts = response.posts;
+        this.postsUpdated.next({
+          posts: [...this.posts],
+          max_posts: response.max_posts,
+        });
       });
   }
 
@@ -71,7 +76,10 @@ export class PostService {
    * Permite lincarse al observable de posts.
    * @returns Devuelve el observable de los posts.
    */
-  public getPostUpdateListener(): Observable<Post[]> {
+  public getPostUpdateListener(): Observable<{
+    posts: Post[];
+    max_posts: number;
+  }> {
     return this.postsUpdated.asObservable();
   }
 
@@ -90,9 +98,7 @@ export class PostService {
         'http://localhost:3000/api/posts',
         post_data
       )
-      .subscribe((data) => {
-        this.posts.push(this.mapServerPost(data.post));
-        this.postsUpdated.next([...this.posts]);
+      .subscribe(() => {
         this.router.navigate(['/']);
       });
   }
@@ -101,16 +107,10 @@ export class PostService {
    * Elimina el post introducido
    * @param post Post que se desea eliminar.
    */
-  public deleteOne(post: Post): void {
-    this.http_client
-      .delete<{ message: string }>('http://localhost:3000/api/posts/' + post.id)
-      .subscribe(() => {
-        const new_posts = this.posts.filter(
-          (existing_post) => existing_post.id != post.id
-        );
-        this.posts = new_posts;
-        this.postsUpdated.next([...this.posts]);
-      });
+  public deleteOne(post: Post) {
+    return this.http_client.delete<{ message: string }>(
+      'http://localhost:3000/api/posts/' + post.id
+    );
   }
 
   /**
@@ -149,14 +149,7 @@ export class PostService {
         'http://localhost:3000/api/posts/' + post.id,
         post_data
       )
-      .subscribe((response) => {
-        const posts_updated = [...this.posts];
-        const old_index = this.posts.findIndex(
-          (existing_post) => existing_post.id == post.id
-        );
-        this.posts[old_index] = response.post;
-        this.posts = posts_updated;
-        this.postsUpdated.next([...this.posts]);
+      .subscribe(() => {
         this.router.navigate(['/']);
       });
   }

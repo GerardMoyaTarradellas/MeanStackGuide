@@ -52,17 +52,24 @@ router.get("", (req, res, next) => {
   const page_size = +req.query.page_size;
   const current_page = +req.query.page;
   const post_query = Post.find();
+  let bd_posts = [];
 
   if (page_size && current_page) {
     post_query.skip(page_size * (current_page - 1)).limit(page_size);
   }
 
-  post_query.then((posts) => {
-    res.status(200).json({
-      message: "Posts leídos",
-      posts: posts,
+  post_query
+    .then((posts) => {
+      bd_posts = posts;
+      return Post.count();
+    })
+    .then((count) => {
+      res.status(200).json({
+        message: "Posts leídos",
+        posts: bd_posts,
+        max_posts: count,
+      });
     });
-  });
 });
 
 /** Obtiene un único post. */

@@ -16,7 +16,7 @@ export class PostListComponent implements OnInit, OnDestroy {
   /** Define si el componente esta cargando o no. */
   public is_loading: boolean = false;
   /** Numero total de post s */
-  public total_post: number = 10;
+  public total_post: number = 0;
   /** Numero total de post mostrados en el componente */
   public post_per_page: number = 2;
   /** Opciones para el númeroo total de post mostrados en el componente */
@@ -42,8 +42,9 @@ export class PostListComponent implements OnInit, OnDestroy {
     this.post_service.getPosts(this.post_per_page, this.current_page);
     this.posts_subscription = this.post_service
       .getPostUpdateListener()
-      .subscribe((new_posts) => {
-        this.posts = new_posts;
+      .subscribe((response) => {
+        this.posts = response.posts;
+        this.total_post = response.max_posts;
         this.is_loading = false;
       });
   }
@@ -60,7 +61,9 @@ export class PostListComponent implements OnInit, OnDestroy {
    * @param post Post que se desea eliminar.
    */
   public onDelete(post: Post) {
-    this.post_service.deleteOne(post);
+    this.post_service.deleteOne(post).subscribe(() => {
+      this.post_service.getPosts(this.post_per_page, this.current_page);
+    });
   }
 
   /**
@@ -68,6 +71,7 @@ export class PostListComponent implements OnInit, OnDestroy {
    * @param event Evento nativo.
    */
   public onChangedPage(event: PageEvent) {
+    this.is_loading = true;
     this.current_page = event.pageIndex + 1;
     this.post_per_page = event.pageSize;
     this.post_service.getPosts(this.post_per_page, this.current_page);
