@@ -73,11 +73,16 @@ export class PostService {
    * Añade un nuevo post a la lista de posts.
    * @param new_post Post que desea añadir.
    */
-  public addPost(new_post: Post): void {
+  public addPost(new_post: Post, image: File): void {
+    const post_data = new FormData();
+    post_data.append('title', new_post.title);
+    post_data.append('content', new_post.content);
+    post_data.append('image', image, new_post.title);
+
     this.http_client
       .post<{ message: string; post: any }>(
         'http://localhost:3000/api/posts',
-        new_post
+        post_data
       )
       .subscribe((data) => {
         this.posts.push(this.mapServerPost(data.post));

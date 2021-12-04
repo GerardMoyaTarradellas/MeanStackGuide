@@ -7,7 +7,7 @@ const router = express.Router();
 
 const MIME_TYPE_MAP = {
   "image/png": "png",
-  "image/jpeg": "jepeg",
+  "image/jpeg": "jpeg",
   "image/jpg": "jpg",
 };
 
@@ -18,28 +18,32 @@ const storage = multer.diskStorage({
     if (is_valid) {
       error = null;
     }
-    callback(null, "backend/images");
+    callback(null, "back-end/images");
   },
   filename: (req, file, callback) => {
     const name = file.originalname.toLowerCase().split(" ").join("-");
-    const ext = MIME_TYPE_MAP(file.mimetype);
+    const ext = MIME_TYPE_MAP[file.mimetype];
     callback(null, name + "-" + Date.now() + "." + ext);
   },
 });
 
 /** Generación de posts. */
-router.post("", multer(storage).single("image"), (req, res, next) => {
-  const post = new Post({
-    title: req.body.title,
-    content: req.body.content,
-  });
-  post.save().then((post) => {
-    res.status(201).json({
-      message: "Post creado!",
-      post: post,
+router.post(
+  "",
+  multer({ storage: storage }).single("image"),
+  (req, res, next) => {
+    const post = new Post({
+      title: req.body.title,
+      content: req.body.content,
     });
-  });
-});
+    post.save().then((post) => {
+      res.status(201).json({
+        message: "Post creado!",
+        post: post,
+      });
+    });
+  }
+);
 
 /** Consulta de posts existentes en la db. */
 router.get("", (req, res, next) => {

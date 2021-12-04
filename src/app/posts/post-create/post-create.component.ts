@@ -110,7 +110,7 @@ export class PostCreateComponent implements OnInit {
 
     this.is_loading = true;
     if (this.mode == 'creation') {
-      this.post_service.addPost(new_post);
+      this.post_service.addPost(new_post, this.form.value.image);
     } else {
       new_post.id = this.post.id;
       this.post_service.updatePost(new_post);
