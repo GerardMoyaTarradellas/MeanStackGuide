@@ -1,5 +1,5 @@
 /** Interfaz del `Post` */
-export interface Post {
+export interface IPost {
   /** Id del post. */
   id: string;
   /** Titulo del post. */

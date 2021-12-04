@@ -4,7 +4,7 @@ const unique_validator = require("mongoose-unique-validator");
 /** Esquema del `Post` */
 const UserSchema = mongoose.Schema({
   /** Email del usuario. */
-  title: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true },
   /** Email del usuario. */
   password: { type: String, required: true },
 });

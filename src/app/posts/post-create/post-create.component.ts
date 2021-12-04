@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 
-import { Post } from '../post.interface';
+import { IPost } from '../post.interface';
 import { PostService } from '../post.service';
 import { mimeType } from '../../utils/validators/mime-type.validator';
 
@@ -18,7 +18,7 @@ export class PostCreateComponent implements OnInit {
   /** Define si el componente esta cargando o no. */
   public is_loading: boolean = false;
   /** Id del post que se edita */
-  public post: Post;
+  public post: IPost;
   /** Form del componente. */
   public form: FormGroup;
   /** Path de la imagen. */
@@ -103,7 +103,7 @@ export class PostCreateComponent implements OnInit {
     if (this.form.invalid) {
       return;
     }
-    let new_post: Post = {
+    let new_post: IPost = {
       id: '0',
       title: this.form.value.title,
       content: this.form.value.content,

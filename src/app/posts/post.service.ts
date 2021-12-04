@@ -4,17 +4,17 @@ import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { Post } from './post.interface';
+import { IPost } from './post.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PostService {
   /** Lista de todos los posts. */
-  private posts: Post[] = [];
+  private posts: IPost[] = [];
   /** Genera un observable cada vez que se añade un nuevo post. */
-  private postsUpdated: Subject<{ posts: Post[]; max_posts: number }> =
-    new Subject<{ posts: Post[]; max_posts: number }>();
+  private postsUpdated: Subject<{ posts: IPost[]; max_posts: number }> =
+    new Subject<{ posts: IPost[]; max_posts: number }>();
 
   /**
    * Constructor del servicio.
@@ -27,7 +27,7 @@ export class PostService {
    * Devuelve el post con el id introducido.
    * @param id Id del post que se quiere obtener.
    */
-  public getPost(id: string): Observable<Post | undefined> {
+  public getPost(id: string): Observable<IPost | undefined> {
     return this.http_client
       .get<{ message: string; post: any }>(
         'http://localhost:3000/api/posts/' + id
@@ -77,7 +77,7 @@ export class PostService {
    * @returns Devuelve el observable de los posts.
    */
   public getPostUpdateListener(): Observable<{
-    posts: Post[];
+    posts: IPost[];
     max_posts: number;
   }> {
     return this.postsUpdated.asObservable();
@@ -87,7 +87,7 @@ export class PostService {
    * Añade un nuevo post a la lista de posts.
    * @param new_post Post que desea añadir.
    */
-  public addPost(new_post: Post, image: File): void {
+  public addPost(new_post: IPost, image: File): void {
     const post_data = new FormData();
     post_data.append('title', new_post.title);
     post_data.append('content', new_post.content);
@@ -107,7 +107,7 @@ export class PostService {
    * Elimina el post introducido
    * @param post Post que se desea eliminar.
    */
-  public deleteOne(post: Post) {
+  public deleteOne(post: IPost) {
     return this.http_client.delete<{ message: string }>(
       'http://localhost:3000/api/posts/' + post.id
     );
@@ -118,7 +118,7 @@ export class PostService {
    * @param post Post de la db
    * @returns Devuelve un post con la estructura del front.
    */
-  private mapServerPost(post: any): Post {
+  private mapServerPost(post: any): IPost {
     return {
       id: post._id,
       title: post.title,
@@ -132,8 +132,8 @@ export class PostService {
    * @param post Post que se ha modificado.
    * @param image Imagen ligada al post.
    */
-  public updatePost(post: Post, image: File | string): void {
-    let post_data: Post | FormData;
+  public updatePost(post: IPost, image: File | string): void {
+    let post_data: IPost | FormData;
     if (typeof image === 'object') {
       post_data = new FormData();
       post_data.append('id', post.id);

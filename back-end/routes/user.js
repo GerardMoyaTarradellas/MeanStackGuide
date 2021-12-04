@@ -6,11 +6,12 @@ const User = require("../models/user");
 const router = express.Router();
 
 router.post("/signup", (req, res, next) => {
-  bcrypt.hash(requ.body.password, 10).then((password) => {
+  bcrypt.hash(req.body.password, 10).then((password) => {
     const user = new User({
       email: req.body.email,
-      password: req.body.password,
+      password: password,
     });
+    console.log(user);
     user
       .save()
       .then((result) => {

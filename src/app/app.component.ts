@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Post } from './posts/post.interface';
+import { IPost } from './posts/post.interface';
 
 @Component({
   selector: 'app-root',
@@ -8,13 +8,13 @@ import { Post } from './posts/post.interface';
 })
 export class AppComponent {
   /** Lista de los posts mostrados */
-  public posts: Post[] = [];
+  public posts: IPost[] = [];
 
   /**
    * Se llama cada vez que se genera un nuevo post.
    * @param post Nuevo post.
    */
-  onPostCreated(post: Post) {
+  onPostCreated(post: IPost) {
     this.posts.push(post);
   }
 }

@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Subscription } from 'rxjs';
 
-import { Post } from '../post.interface';
+import { IPost } from '../post.interface';
 import { PostService } from '../post.service';
 
 @Component({
@@ -12,7 +12,7 @@ import { PostService } from '../post.service';
 })
 export class PostListComponent implements OnInit, OnDestroy {
   /** Lista de posts utilizados en el componente. */
-  public posts: Post[] = [];
+  public posts: IPost[] = [];
   /** Define si el componente esta cargando o no. */
   public is_loading: boolean = false;
   /** Numero total de post s */
@@ -60,7 +60,7 @@ export class PostListComponent implements OnInit, OnDestroy {
    * Elimina el post.
    * @param post Post que se desea eliminar.
    */
-  public onDelete(post: Post) {
+  public onDelete(post: IPost) {
     this.post_service.deleteOne(post).subscribe(() => {
       this.post_service.getPosts(this.post_per_page, this.current_page);
     });
