@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 
 import { Post } from '../post.interface';
@@ -17,6 +17,8 @@ export class PostCreateComponent implements OnInit {
   public is_loading: boolean = false;
   /** Id del post que se edita */
   public post: Post;
+  /** Form del componente. */
+  public form: FormGroup;
 
   /**
    * Constructor de la clase
@@ -32,6 +34,7 @@ export class PostCreateComponent implements OnInit {
    * Se llama cada vez que el componente se inicializa
    */
   ngOnInit(): void {
+    this.createForm();
     this.router.paramMap.subscribe((param_map: ParamMap) => {
       if (param_map.has('id')) {
         this.is_loading = true;
@@ -39,6 +42,10 @@ export class PostCreateComponent implements OnInit {
         this.post_service.getPost(param_map.get('id')).subscribe((response) => {
           if (response) {
             this.post = response;
+            this.form.setValue({
+              title: this.post.title,
+              content: this.post.content,
+            });
           } else {
             this.mode = 'creation';
           }
@@ -51,26 +58,39 @@ export class PostCreateComponent implements OnInit {
   }
 
   /**
-   * Se llama cuando se hace click en el botón de guardar.
-   * @param form Form con la información del nuevo post.
+   * Crea el form del componente
    */
-  public onSavePost(form: NgForm) {
-    if (form.invalid) {
+  private createForm(): void {
+    this.form = new FormGroup({
+      title: new FormControl(null, {
+        validators: [Validators.required, Validators.minLength(3)],
+      }),
+      content: new FormControl(null, {
+        validators: [Validators.required],
+      }),
+    });
+  }
+
+  /**
+   * Se llama cuando se hace click en el botón de guardar.
+   */
+  public onSavePost() {
+    if (this.form.invalid) {
       return;
     }
+    let new_post: Post = {
+      id: '0',
+      title: this.form.value.title,
+      content: this.form.value.content,
+    };
 
     this.is_loading = true;
     if (this.mode == 'creation') {
-      const new_post: Post = {
-        id: '0',
-        title: form.value.title,
-        content: form.value.content,
-      };
-
       this.post_service.addPost(new_post);
-      form.resetForm();
     } else {
-      this.post_service.updatePost(this.post);
+      new_post.id = this.post.id;
+      this.post_service.updatePost(new_post);
     }
+    this.form.reset();
   }
 }
