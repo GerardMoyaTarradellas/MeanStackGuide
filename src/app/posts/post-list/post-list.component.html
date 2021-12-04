@@ -19,6 +19,13 @@
     </mat-action-row>
   </mat-expansion-panel>
 </mat-accordion>
+<mat-paginator
+  [length]="this.total_post"
+  [pageSize]="this.post_per_page"
+  [pageSizeOptions]="this.post_size_options"
+  (page)="onChangedPage($event)"
+>
+</mat-paginator>
 <p
   class="info-text mat-body-1"
   *ngIf="this.posts.length < 1 && is_loading == false"
