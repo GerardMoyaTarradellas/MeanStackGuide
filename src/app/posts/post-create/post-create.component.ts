@@ -49,6 +49,7 @@ export class PostCreateComponent implements OnInit {
             this.form.setValue({
               title: this.post.title,
               content: this.post.content,
+              image: this.post.image_path,
             });
           } else {
             this.mode = 'creation';
@@ -114,7 +115,7 @@ export class PostCreateComponent implements OnInit {
       this.post_service.addPost(new_post, this.form.value.image);
     } else {
       new_post.id = this.post.id;
-      this.post_service.updatePost(new_post);
+      this.post_service.updatePost(new_post, this.form.value.image);
     }
     this.form.reset();
   }

@@ -7,6 +7,10 @@ import { Observable, Observer, of } from 'rxjs';
 export const mimeType = (
   control: AbstractControl
 ): Promise<{ [key: string]: any }> | Observable<{ [key: string]: any }> => {
+  if (typeof control.value === 'string') {
+    return of(null);
+  }
+
   const file = control.value as File;
   const file_reader = new FileReader();
   const file_reader$ = of((observer: Observer<{ [key: string]: any }>) => {

@@ -125,19 +125,31 @@ export class PostService {
   /**
    * Permite modificar un post existente en la db
    * @param post Post que se ha modificado.
+   * @param image Imagen ligada al post.
    */
-  public updatePost(post: Post): void {
+  public updatePost(post: Post, image: File | string): void {
+    let post_data: Post | FormData;
+    if (typeof image === 'object') {
+      post_data = new FormData();
+      post_data.append('id', post.id);
+      post_data.append('title', post.title);
+      post_data.append('content', post.content);
+      post_data.append('image', image, post.title);
+    } else {
+      post_data = post;
+    }
+
     this.http_client
       .put<{ message: string; post: any }>(
         'http://localhost:3000/api/posts/' + post.id,
-        post
+        post_data
       )
-      .subscribe(() => {
+      .subscribe((response) => {
         const posts_updated = [...this.posts];
         const old_index = this.posts.findIndex(
           (existing_post) => existing_post.id == post.id
         );
-        this.posts[old_index] = post;
+        this.posts[old_index] = response.post;
         this.posts = posts_updated;
         this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);

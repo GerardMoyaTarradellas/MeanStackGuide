@@ -84,13 +84,22 @@ router.delete("/:id", (req, res, next) => {
 });
 
 /** Eliminación de un post */
-router.put("/:id", (req, res, next) => {
-  Post.updateOne({ _id: req.params.id }, req.body).then((post_modified) => {
-    res.status(200).json({
-      message: "Post modificado",
-      post: post_modified,
+router.put(
+  "/:id",
+  multer({ storage: storage }).single("image"),
+  (req, res, next) => {
+    if (req.file) {
+      const url = req.protocol + "://" + req.get("host");
+      req.body.image_path = url + "/images/" + req.file.filename;
+    }
+
+    Post.updateOne({ _id: req.params.id }, req.body).then((post_modified) => {
+      res.status(200).json({
+        message: "Post modificado",
+        post: req.body,
+      });
     });
-  });
-});
+  }
+);
 
 module.exports = router;
