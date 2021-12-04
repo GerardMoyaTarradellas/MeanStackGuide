@@ -22,6 +22,9 @@ export class PostListComponent implements OnInit, OnDestroy {
   /** Opciones para el númeroo total de post mostrados en el componente */
   public post_size_options: number[] = [1, 2, 5];
 
+  /** Pagina actual del paginador. */
+  private current_page: number = 1;
+
   /** Subscripción a los posts. */
   private posts_subscription: Subscription;
 
@@ -36,7 +39,7 @@ export class PostListComponent implements OnInit, OnDestroy {
    */
   ngOnInit(): void {
     this.is_loading = true;
-    this.post_service.getPosts();
+    this.post_service.getPosts(this.post_per_page, this.current_page);
     this.posts_subscription = this.post_service
       .getPostUpdateListener()
       .subscribe((new_posts) => {
@@ -64,5 +67,9 @@ export class PostListComponent implements OnInit, OnDestroy {
    * Se ejecuta al cambiar el paginador.
    * @param event Evento nativo.
    */
-  public onChangedPage(event: PageEvent) {}
+  public onChangedPage(event: PageEvent) {
+    this.current_page = event.pageIndex + 1;
+    this.post_per_page = event.pageSize;
+    this.post_service.getPosts(this.post_per_page, this.current_page);
+  }
 }

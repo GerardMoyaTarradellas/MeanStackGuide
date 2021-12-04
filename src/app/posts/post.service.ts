@@ -46,11 +46,16 @@ export class PostService {
 
   /**
    * Genera una copia de la lista de posts y la devuelve.
+   * @param page_size Número de posts que se desean obtener por página.
+   * @param current_page Número de la página actual.
    * @returns Devuelve una array de posts.
    */
-  public getPosts() {
+  public getPosts(page_size: number, current_page: number) {
+    const query_params = `?page_size=${page_size}&page=${current_page}`;
     this.http_client
-      .get<{ message: string; posts: any[] }>('http://localhost:3000/api/posts')
+      .get<{ message: string; posts: any[] }>(
+        'http://localhost:3000/api/posts' + query_params
+      )
       .pipe(
         map((data) => {
           return data.posts.map((post) => this.mapServerPost(post));
