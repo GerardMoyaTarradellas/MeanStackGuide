@@ -35,6 +35,9 @@
       </button>
       <input type="file" #filePicker (change)="onImagePicked($event)" />
     </div>
+    <div class="image-preview" *ngIf="image_preview !== '' && image_preview">
+      <img [src]="image_preview" [alt]="form.value.title" />
+    </div>
     <button mat-raised-button color="accent" type="submit">Guardar</button>
   </form>
 </mat-card>

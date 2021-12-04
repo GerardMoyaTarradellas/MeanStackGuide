@@ -13,12 +13,15 @@ import { PostService } from '../post.service';
 export class PostCreateComponent implements OnInit {
   /** Modo del componente. */
   private mode: 'creation' | 'edition';
+
   /** Define si el componente esta cargando o no. */
   public is_loading: boolean = false;
   /** Id del post que se edita */
   public post: Post;
   /** Form del componente. */
   public form: FormGroup;
+  /** Path de la imagen. */
+  public image_preview: string;
 
   /**
    * Constructor de la clase
@@ -82,8 +85,12 @@ export class PostCreateComponent implements OnInit {
     const file = (event.target as HTMLInputElement).files[0];
     this.form.patchValue({ image: file });
     this.form.get('image').updateValueAndValidity();
-    console.log(file);
-    console.log(this.form);
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.image_preview = reader.result as string;
+    };
+    reader.readAsDataURL(file);
   }
 
   /**

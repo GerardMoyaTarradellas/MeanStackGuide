@@ -18,3 +18,12 @@ mat-spinner {
 input[type="file"] {
   visibility: hidden;
 }
+
+.image-preview {
+  height: 80px;
+  margin: 16px 0px;
+}
+
+.image-preview img {
+  height: 100%;
+}
