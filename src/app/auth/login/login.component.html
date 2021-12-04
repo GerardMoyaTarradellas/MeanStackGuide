@@ -2,7 +2,7 @@
   <mat-spinner *ngIf="is_loading"></mat-spinner>
   <form
     *ngIf="is_loading == false"
-    (submit)="logIn(loginForm)"
+    (submit)="onLogIn(loginForm)"
     #loginForm="ngForm"
   >
     <mat-form-field>

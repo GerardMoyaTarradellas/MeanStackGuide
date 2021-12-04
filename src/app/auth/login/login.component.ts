@@ -13,5 +13,5 @@ export class LoginComponent {
   /**
    * Logea al usuario introducido.
    */
-  public onLogin(form: NgForm) {}
+  public onLogIn(form: NgForm) {}
 }
