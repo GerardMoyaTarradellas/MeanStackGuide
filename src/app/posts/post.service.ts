@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { PostListComponent } from './post-list/post-list.component';
 
 import { Post } from './post.interface';
 
@@ -117,6 +118,7 @@ export class PostService {
       id: post._id,
       title: post.title,
       content: post.content,
+      image_path: post.image_path,
     };
   }
 

@@ -6,4 +6,6 @@ export interface Post {
   title: string;
   /** Contenido del post. */
   content: string;
+  /** Path de la imagen */
+  image_path: string;
 }

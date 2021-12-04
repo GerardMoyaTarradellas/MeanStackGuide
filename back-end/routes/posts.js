@@ -32,9 +32,11 @@ router.post(
   "",
   multer({ storage: storage }).single("image"),
   (req, res, next) => {
+    const url = req.protocol + "://" + req.get("host");
     const post = new Post({
       title: req.body.title,
       content: req.body.content,
+      image_path: url + "/images/" + req.file.filename,
     });
     post.save().then((post) => {
       res.status(201).json({
