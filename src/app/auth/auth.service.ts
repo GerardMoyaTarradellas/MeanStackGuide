@@ -15,6 +15,8 @@ export class AuthService {
   private auth_status: Subject<boolean> = new Subject<boolean>();
   /** Define si el usuario esta autenticado */
   private is_authenticated: boolean = false;
+  /** Timer del token */
+  private timer: any;
 
   /**
    * Constructor del servicio.
@@ -64,13 +66,17 @@ export class AuthService {
    */
   public login(user_data: IAuth) {
     this.http_client
-      .post<{ message: string; token: string }>(
+      .post<{ message: string; token: string; expires_in: number }>(
         'http://localhost:3000/api/user/login',
         user_data
       )
       .subscribe((response) => {
         this.token = response.token;
         if (response.token) {
+          this.timer = window.setTimeout(() => {
+            this.logOut();
+          }, response.expires_in);
+
           this.is_authenticated = true;
           this.auth_status.next(true);
           this.router.navigate(['/']);
@@ -86,5 +92,6 @@ export class AuthService {
     this.is_authenticated = false;
     this.auth_status.next(false);
     this.router.navigate(['/']);
+    clearTimeout(this.timer);
   }
 }
