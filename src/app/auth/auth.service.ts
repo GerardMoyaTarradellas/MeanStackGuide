@@ -85,5 +85,6 @@ export class AuthService {
     this.token = null;
     this.is_authenticated = false;
     this.auth_status.next(false);
+    this.router.navigate(['/']);
   }
 }
