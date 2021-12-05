@@ -36,4 +36,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.auth_subscription.unsubscribe();
   }
+
+  /**
+   * Se ejecuta al pulsar el botón de Log Out
+   */
+  public onLogOut(): void {
+    this.auth_service.logOut();
+  }
 }
