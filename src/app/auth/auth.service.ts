@@ -26,6 +26,34 @@ export class AuthService {
   constructor(private http_client: HttpClient, private router: Router) {}
 
   /**
+   * Autologea al usuario.
+   */
+  public autoAuth() {
+    const data = this.getAuthData();
+
+    if (data) {
+      const expires_in = data.expiration.getTime() - new Date().getTime();
+
+      if (expires_in > 0) {
+        this.token = data.token;
+        this.is_authenticated = true;
+        this.auth_status.next(true);
+        this.setAuthTimer(expires_in);
+        this.router.navigate(['/']);
+      }
+    }
+    this.router.navigate(['/login']);
+  }
+
+  /**
+   * Elimina todos los datos del local storage referente a la autenticación.
+   */
+  private clearAuthData() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('expiration');
+  }
+
+  /**
    * Crea un nuevo usuario.
    * @param user_data Datos del usuario.
    */
@@ -35,6 +63,24 @@ export class AuthService {
       .subscribe((response) => {
         console.log(response);
       });
+  }
+
+  /**
+   * Coge los datos de logeado del localstorage.
+   * @returns
+   */
+  private getAuthData() {
+    const token = localStorage.getItem('token');
+    const expiration = localStorage.getItem('expiration');
+
+    if (token && expiration) {
+      return {
+        token: token,
+        expiration: new Date(expiration),
+      };
+    } else {
+      return;
+    }
   }
 
   /**
@@ -73,11 +119,13 @@ export class AuthService {
       .subscribe((response) => {
         this.token = response.token;
         if (response.token) {
-          this.timer = window.setTimeout(() => {
-            this.logOut();
-          }, response.expires_in);
-
           this.is_authenticated = true;
+          this.setAuthTimer(response.expires_in);
+          const expiration_date = new Date(
+            new Date().getTime() + response.expires_in
+          );
+          this.saveAuthData(this.token, expiration_date);
+
           this.auth_status.next(true);
           this.router.navigate(['/']);
         }
@@ -91,7 +139,27 @@ export class AuthService {
     this.token = null;
     this.is_authenticated = false;
     this.auth_status.next(false);
-    this.router.navigate(['/']);
+    this.router.navigate(['/login']);
     clearTimeout(this.timer);
+  }
+
+  /**
+   * Guarda la información de autenticación.
+   * @param token Token del usuario.
+   * @param expiration_date Fecha en que el token caduca.
+   */
+  private saveAuthData(token: string, expiration_date: Date) {
+    localStorage.setItem('token', token);
+    localStorage.setItem('expiration', expiration_date.toISOString());
+  }
+
+  /**
+   * Define el timer de logeo
+   * @param duration Numero de segundos en que el token caduca
+   */
+  private setAuthTimer(duration: number) {
+    this.timer = window.setTimeout(() => {
+      this.logOut();
+    }, duration);
   }
 }

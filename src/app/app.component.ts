@@ -1,20 +1,23 @@
-import { Component } from '@angular/core';
-import { IPost } from './posts/post.interface';
+import { Component, OnInit } from '@angular/core';
+
+import { AuthService } from './auth/auth.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent {
-  /** Lista de los posts mostrados */
-  public posts: IPost[] = [];
+export class AppComponent implements OnInit {
+  /**
+   * Constructor del componente
+   * @param auth_service Servicio de autenticación.
+   */
+  constructor(private auth_service: AuthService) {}
 
   /**
-   * Se llama cada vez que se genera un nuevo post.
-   * @param post Nuevo post.
+   * Método que se llama al inicializar el componente.
    */
-  onPostCreated(post: IPost) {
-    this.posts.push(post);
+  ngOnInit() {
+    this.auth_service.autoAuth();
   }
 }
