@@ -1,7 +1,10 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
+const e = require("express");
+const user = require("../models/user");
 
 const router = express.Router();
 
@@ -26,6 +29,44 @@ router.post("/signup", (req, res, next) => {
         });
       });
   });
+});
+
+router.post("/login", (req, res, next) => {
+  User.findOne({ email: req.body.email })
+    .then((user) => {
+      if (!user) {
+        return res.status(401).json({
+          message: "User not found!",
+        });
+      }
+
+      return bcrypt.compare(req.body.password, user.password);
+    })
+    .then((result) => {
+      if (!result) {
+        return res.status(401).json({
+          message: "Incorrect password",
+        });
+      }
+
+      const token = jwt.sign(
+        { email: user.email, user_id: user._id },
+        "secret_this_should_be_longer",
+        {
+          expiresIn: "1h",
+        }
+      );
+
+      res.status(200).json({
+        message: "Login succesfull",
+        token: token,
+      });
+    })
+    .catch((err) => {
+      return res.status(401).json({
+        message: "Error - " + err,
+      });
+    });
 });
 
 module.exports = router;

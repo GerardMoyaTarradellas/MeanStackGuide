@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { IAuth } from '../auth.interface';
 
 import { AuthService } from '../auth.service';
 
@@ -21,6 +20,7 @@ export class SignupComponent {
 
   /**
    * Logea al usuario introducido.
+   * @param form Form del componente.
    */
   public onSignUp(form: NgForm) {
     if (form.invalid) {

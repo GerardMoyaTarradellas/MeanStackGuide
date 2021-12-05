@@ -24,4 +24,16 @@ export class AuthService {
         console.log(response);
       });
   }
+
+  /**
+   * Logea al usuario.
+   * @param user_data Datos del usuario.
+   */
+  public login(user_data: IAuth) {
+    this.http_client
+      .post('http://localhost:3000/api/user/login', user_data)
+      .subscribe((response) => {
+        console.log(response);
+      });
+  }
 }

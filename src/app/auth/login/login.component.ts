@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -11,7 +12,19 @@ export class LoginComponent {
   public is_loading: boolean = false;
 
   /**
-   * Logea al usuario introducido.
+   * Constructor del componente.
+   * @param auth_service Servicio de autenticación
    */
-  public onLogIn(form: NgForm) {}
+  constructor(private auth_service: AuthService) {}
+
+  /**
+   * Logea al usuario introducido.
+   * @param form Form del componente.
+   */
+  public onLogIn(form: NgForm) {
+    this.auth_service.login({
+      email: form.value.email,
+      password: form.value.password,
+    });
+  }
 }
