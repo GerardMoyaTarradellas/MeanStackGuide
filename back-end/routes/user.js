@@ -33,6 +33,8 @@ router.post("/signup", (req, res, next) => {
 
 /** Comprueba que el usuario exista y genera un token */
 router.post("/login", (req, res, next) => {
+  let current_user;
+
   User.findOne({ email: req.body.email })
     .then((user) => {
       if (!user) {
@@ -41,6 +43,7 @@ router.post("/login", (req, res, next) => {
         });
       }
 
+      current_user = user;
       return bcrypt.compare(req.body.password, user.password);
     })
     .then((result) => {
@@ -51,7 +54,7 @@ router.post("/login", (req, res, next) => {
       }
 
       const token = jwt.sign(
-        { email: user.email, user_id: user._id },
+        { email: current_user.email, user_id: current_user._id },
         "secret_this_should_be_longer",
         {
           expiresIn: "1h",

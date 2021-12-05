@@ -8,4 +8,6 @@ export interface IPost {
   content: string;
   /** Path de la imagen */
   image_path: string;
+  /** Id del creador */
+  creator: string;
 }

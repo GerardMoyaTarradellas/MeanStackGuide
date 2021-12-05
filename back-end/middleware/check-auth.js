@@ -2,10 +2,13 @@ const jwt = require("jsonwebtoken");
 
 module.exports = (req, res, next) => {
   try {
-    console.log(req.headers);
     const token = req.headers.authorization.split(" ")[1];
-
-    jwt.verify(token, "secret_this_should_be_longer");
+    const decoded_token = jwt.verify(token, "secret_this_should_be_longer");
+    console.log(decoded_token);
+    req.user_data = {
+      email: decoded_token.email,
+      user_id: decoded_token.user_id,
+    };
     next();
   } catch (error) {
     res.status(401).json({

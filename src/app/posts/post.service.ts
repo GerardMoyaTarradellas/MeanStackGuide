@@ -124,6 +124,7 @@ export class PostService {
       title: post.title,
       content: post.content,
       image_path: post.image_path,
+      creator: post.creator,
     };
   }
 
