@@ -8,6 +8,7 @@ module.exports = (req, res, next) => {
       email: decoded_token.email,
       user_id: decoded_token.user_id,
     };
+    console.log("Usuario autenticado");
     next();
   } catch (error) {
     res.status(401).json({

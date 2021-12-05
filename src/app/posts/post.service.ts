@@ -140,7 +140,7 @@ export class PostService {
       post_data.append('id', post.id);
       post_data.append('title', post.title);
       post_data.append('content', post.content);
-      post_data.append('image', image, post.title);
+      post_data.append('image', image, post.image_path);
       post_data.append('creator', image, post.creator);
     } else {
       post_data = post;

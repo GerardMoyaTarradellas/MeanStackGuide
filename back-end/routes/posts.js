@@ -42,6 +42,7 @@ router.post(
       creator: req.user_data.user_id,
     });
     post.save().then((post) => {
+      console.log("Post creado -> " + post._id);
       res.status(201).json({
         message: "Post creado!",
         post: post,
@@ -67,6 +68,7 @@ router.get("", (req, res, next) => {
       return Post.count();
     })
     .then((count) => {
+      console.log("Post recogidos");
       res.status(200).json({
         message: "Posts leídos",
         posts: bd_posts,
@@ -79,11 +81,13 @@ router.get("", (req, res, next) => {
 router.get("/:id", (req, res, next) => {
   Post.findById(req.params.id).then((post) => {
     if (post) {
+      console.log("Post encontrado -> " + post._id);
       res.status(200).json({
         message: "Post leído",
         post: post,
       });
     } else {
+      console.log("Post no encontrado");
       res.status(404).json({
         message: "Post no encontrado",
         post: undefined,
@@ -96,11 +100,13 @@ router.get("/:id", (req, res, next) => {
 router.delete("/:id", auth, (req, res, next) => {
   Post.deleteOne({ _id: req.params.id, creator: req.user_data.user_id }).then(
     (result) => {
-      if (result.n > 0) {
+      if (result.deletedCount > 0) {
+        console.log("Post eliminado");
         res.status(200).json({
           message: "Post eliminado",
         });
       } else {
+        console.log("Post no eliminado");
         res.status(401).json({
           message: "Not authorized!",
           post: null,
@@ -120,17 +126,18 @@ router.put(
       const url = req.protocol + "://" + req.get("host");
       req.body.image_path = url + "/images/" + req.file.filename;
     }
-
     Post.updateOne(
       { _id: req.params.id, creator: req.user_data.user_id },
       req.body
     ).then((result) => {
-      if (result.nModified > 0) {
+      if (result.modifiedCount > 0) {
+        console.log("Post editado");
         res.status(200).json({
           message: "Post modificado",
           post: req.body,
         });
       } else {
+        console.log("Post no editado -> Desautorizado");
         res.status(401).json({
           message: "Not authorized!",
           post: null,

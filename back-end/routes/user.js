@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
-const user = require("../models/user");
 
 const router = express.Router();
 
@@ -23,6 +22,7 @@ router.post("/signup", (req, res, next) => {
         });
       })
       .catch((err) => {
+        console.log(err);
         res.status(500).json({
           error: err,
         });
@@ -60,11 +60,12 @@ router.post("/login", (req, res, next) => {
         }
       );
 
+      console.log("Logeado -> " + current_user._id);
       res.status(200).json({
         message: "Login succesfull",
         token: token,
         expires_in: 3600000,
-        user_id: current_user.user_id,
+        user_id: current_user._id,
       });
     })
     .catch((err) => {

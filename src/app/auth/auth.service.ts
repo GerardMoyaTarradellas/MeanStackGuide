@@ -54,6 +54,7 @@ export class AuthService {
   private clearAuthData() {
     localStorage.removeItem('token');
     localStorage.removeItem('expiration');
+    localStorage.removeItem('user_id');
   }
 
   /**
@@ -61,11 +62,16 @@ export class AuthService {
    * @param user_data Datos del usuario.
    */
   public createUser(user_data: IAuth) {
-    this.http_client
+    return this.http_client
       .post('http://localhost:3000/api/user/signup', user_data)
-      .subscribe((response) => {
-        console.log(response);
-      });
+      .subscribe(
+        () => {
+          this.router.navigate(['/']);
+        },
+        (error) => {
+          this.auth_status.next(false);
+        }
+      );
   }
 
   /**
@@ -130,21 +136,26 @@ export class AuthService {
         expires_in: number;
         user_id: string;
       }>('http://localhost:3000/api/user/login', user_data)
-      .subscribe((response) => {
-        this.token = response.token;
-        if (response.token) {
-          this.is_authenticated = true;
-          this.user_id = response.user_id;
-          this.setAuthTimer(response.expires_in);
-          const expiration_date = new Date(
-            new Date().getTime() + response.expires_in
-          );
-          this.saveAuthData(this.token, expiration_date, this.user_id);
+      .subscribe(
+        (response) => {
+          this.token = response.token;
+          if (response.token) {
+            this.is_authenticated = true;
+            this.user_id = response.user_id;
+            this.setAuthTimer(response.expires_in);
+            const expiration_date = new Date(
+              new Date().getTime() + response.expires_in
+            );
+            this.saveAuthData(this.token, expiration_date, this.user_id);
 
-          this.auth_status.next(true);
-          this.router.navigate(['/']);
+            this.auth_status.next(true);
+            this.router.navigate(['/']);
+          }
+        },
+        (error) => {
+          this.auth_status.next(false);
         }
-      });
+      );
   }
 
   /**
@@ -157,6 +168,7 @@ export class AuthService {
     this.auth_status.next(false);
     this.router.navigate(['/login']);
     clearTimeout(this.timer);
+    this.clearAuthData();
   }
 
   /**

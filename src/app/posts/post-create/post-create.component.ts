@@ -116,6 +116,8 @@ export class PostCreateComponent implements OnInit {
       this.post_service.addPost(new_post, this.form.value.image);
     } else {
       new_post.id = this.post.id;
+      new_post.image_path = this.post.image_path;
+      new_post.creator = this.post.creator;
       this.post_service.updatePost(new_post, this.form.value.image);
     }
     this.form.reset();

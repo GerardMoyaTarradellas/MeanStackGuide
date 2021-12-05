@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../auth.service';
 
 @Component({
@@ -7,15 +8,35 @@ import { AuthService } from '../auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit, OnDestroy {
   /** Define si el componente esta cargando información */
   public is_loading: boolean = false;
+  /** Subscripción de la autenticación */
+  private auth_subscription: Subscription;
 
   /**
    * Constructor del componente.
-   * @param auth_service Servicio de autenticación
+   * @param auth_service Servicio de autenticación.
    */
   constructor(private auth_service: AuthService) {}
+
+  /**
+   * Se ejecuta al inicializar el componente.
+   */
+  ngOnInit() {
+    this.auth_subscription = this.auth_service
+      .getAuthStatusListener()
+      .subscribe(() => {
+        this.is_loading = false;
+      });
+  }
+
+  /**
+   * Se ejecuta cada vez que se destruye el componente.
+   */
+  ngOnDestroy() {
+    this.auth_subscription.unsubscribe();
+  }
 
   /**
    * Logea al usuario introducido.
