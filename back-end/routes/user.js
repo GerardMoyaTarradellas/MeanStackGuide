@@ -14,7 +14,6 @@ router.post("/signup", (req, res, next) => {
       email: req.body.email,
       password: password,
     });
-    console.log(user);
     user
       .save()
       .then((result) => {

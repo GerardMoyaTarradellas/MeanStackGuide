@@ -94,11 +94,20 @@ router.get("/:id", (req, res, next) => {
 
 /** Eliminación de un post */
 router.delete("/:id", auth, (req, res, next) => {
-  Post.deleteOne({ _id: req.params.id }).then(() => {
-    res.status(200).json({
-      message: "Post eliminado",
-    });
-  });
+  Post.deleteOne({ _id: req.params.id, creator: req.user_data.user_id }).then(
+    (result) => {
+      if (result.n > 0) {
+        res.status(200).json({
+          message: "Post eliminado",
+        });
+      } else {
+        res.status(401).json({
+          message: "Not authorized!",
+          post: null,
+        });
+      }
+    }
+  );
 });
 
 /** Eliminación de un post */
@@ -112,11 +121,21 @@ router.put(
       req.body.image_path = url + "/images/" + req.file.filename;
     }
 
-    Post.updateOne({ _id: req.params.id }, req.body).then((post_modified) => {
-      res.status(200).json({
-        message: "Post modificado",
-        post: req.body,
-      });
+    Post.updateOne(
+      { _id: req.params.id, creator: req.user_data.user_id },
+      req.body
+    ).then((result) => {
+      if (result.nModified > 0) {
+        res.status(200).json({
+          message: "Post modificado",
+          post: req.body,
+        });
+      } else {
+        res.status(401).json({
+          message: "Not authorized!",
+          post: null,
+        });
+      }
     });
   }
 );
