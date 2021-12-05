@@ -10,10 +10,20 @@
     </div>
     <p>{{ post.content }}</p>
     <mat-action-row>
-      <a mat-raised-button color="primary" [routerLink]="['edit/', post.id]">
+      <a
+        *ngIf="this.user_authenticated"
+        mat-raised-button
+        color="primary"
+        [routerLink]="['edit/', post.id]"
+      >
         EDITAR
       </a>
-      <button mat-raised-button color="warn" (click)="onDelete(post)">
+      <button
+        *ngIf="this.user_authenticated"
+        mat-raised-button
+        color="warn"
+        (click)="onDelete(post)"
+      >
         ELIMINAR
       </button>
     </mat-action-row>

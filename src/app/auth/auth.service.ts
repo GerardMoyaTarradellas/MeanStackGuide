@@ -13,6 +13,8 @@ export class AuthService {
   private token: string = '';
   /** Define si se ha hecho el proceso de autenticación */
   private auth_status: Subject<boolean> = new Subject<boolean>();
+  /** Define si el usuario esta autenticado */
+  private is_authenticated: boolean = false;
 
   /**
    * Constructor del servicio.
@@ -41,6 +43,14 @@ export class AuthService {
   }
 
   /**
+   * Define si el usuario esta autenticado.
+   * @returns Devuelve una booleana
+   */
+  public getIsAuth(): boolean {
+    return this.is_authenticated;
+  }
+
+  /**
    * Devuelve el token del usuario
    * @returns
    */
@@ -60,8 +70,11 @@ export class AuthService {
       )
       .subscribe((response) => {
         this.token = response.token;
-        this.auth_status.next(true);
-        this.router.navigate(['/']);
+        if (response.token) {
+          this.is_authenticated = true;
+          this.auth_status.next(true);
+          this.router.navigate(['/']);
+        }
       });
   }
 }

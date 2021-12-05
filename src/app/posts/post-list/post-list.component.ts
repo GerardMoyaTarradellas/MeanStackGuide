@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
 
 import { IPost } from '../post.interface';
 import { PostService } from '../post.service';
@@ -21,9 +22,13 @@ export class PostListComponent implements OnInit, OnDestroy {
   public post_per_page: number = 2;
   /** Opciones para el númeroo total de post mostrados en el componente */
   public post_size_options: number[] = [1, 2, 5];
+  /** Defines si el usuario esta autenticado */
+  public user_authenticated: boolean = false;
 
   /** Pagina actual del paginador. */
   private current_page: number = 1;
+  /** Subscripción de la autenticación */
+  private auth_subscription: Subscription;
 
   /** Subscripción a los posts. */
   private posts_subscription: Subscription;
@@ -31,8 +36,12 @@ export class PostListComponent implements OnInit, OnDestroy {
   /**
    * Constructor de la clase
    * @param post_service Servicio de posts de la aplicación.
+   * @param auth_service Servicio de autenticación
    */
-  constructor(private post_service: PostService) {}
+  constructor(
+    private post_service: PostService,
+    private auth_service: AuthService
+  ) {}
 
   /**
    * Se llama cada vez que el componente se inicializa
@@ -47,6 +56,12 @@ export class PostListComponent implements OnInit, OnDestroy {
         this.total_post = response.max_posts;
         this.is_loading = false;
       });
+    this.auth_subscription = this.auth_service
+      .getAuthStatusListener()
+      .subscribe((is_authenticated) => {
+        this.user_authenticated = is_authenticated;
+      });
+    this.user_authenticated = this.auth_service.getIsAuth();
   }
 
   /**
@@ -54,6 +69,7 @@ export class PostListComponent implements OnInit, OnDestroy {
    */
   ngOnDestroy(): void {
     this.posts_subscription.unsubscribe();
+    this.auth_subscription.unsubscribe();
   }
 
   /**
