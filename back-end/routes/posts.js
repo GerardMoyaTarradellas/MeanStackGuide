@@ -2,6 +2,7 @@ const express = require("express");
 const multer = require("multer");
 
 const Post = require("../models/post");
+const auth = require("../middleware/check-auth");
 
 const router = express.Router();
 
@@ -30,6 +31,7 @@ const storage = multer.diskStorage({
 /** Generación de posts. */
 router.post(
   "",
+  auth,
   multer({ storage: storage }).single("image"),
   (req, res, next) => {
     const url = req.protocol + "://" + req.get("host");
@@ -90,7 +92,7 @@ router.get("/:id", (req, res, next) => {
 });
 
 /** Eliminación de un post */
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", auth, (req, res, next) => {
   Post.deleteOne({ _id: req.params.id }).then(() => {
     res.status(200).json({
       message: "Post eliminado",
@@ -101,6 +103,7 @@ router.delete("/:id", (req, res, next) => {
 /** Eliminación de un post */
 router.put(
   "/:id",
+  auth,
   multer({ storage: storage }).single("image"),
   (req, res, next) => {
     if (req.file) {

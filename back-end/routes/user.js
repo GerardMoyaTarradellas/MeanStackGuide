@@ -3,11 +3,11 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
-const e = require("express");
 const user = require("../models/user");
 
 const router = express.Router();
 
+/** Genera un nuevo usuario */
 router.post("/signup", (req, res, next) => {
   bcrypt.hash(req.body.password, 10).then((password) => {
     const user = new User({
@@ -31,6 +31,7 @@ router.post("/signup", (req, res, next) => {
   });
 });
 
+/** Comprueba que el usuario exista y genera un token */
 router.post("/login", (req, res, next) => {
   User.findOne({ email: req.body.email })
     .then((user) => {
