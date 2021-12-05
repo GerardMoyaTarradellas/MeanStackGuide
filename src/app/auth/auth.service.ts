@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { Observable, Subject } from 'rxjs';
 
 import { IAuth } from './auth.interface';
 
@@ -9,12 +11,15 @@ import { IAuth } from './auth.interface';
 export class AuthService {
   /** Token del usuario */
   private token: string = '';
+  /** Define si se ha hecho el proceso de autenticación */
+  private auth_status: Subject<boolean> = new Subject<boolean>();
 
   /**
    * Constructor del servicio.
    * @param http_client Servicio http
+   * @param router Router de la aplicación
    */
-  constructor(private http_client: HttpClient) {}
+  constructor(private http_client: HttpClient, private router: Router) {}
 
   /**
    * Crea un nuevo usuario.
@@ -26,6 +31,13 @@ export class AuthService {
       .subscribe((response) => {
         console.log(response);
       });
+  }
+
+  /**
+   * Devuelve un observable referente al estado de autenticación de la sesión.
+   */
+  public getAuthStatusListener(): Observable<boolean> {
+    return this.auth_status.asObservable();
   }
 
   /**
@@ -48,6 +60,8 @@ export class AuthService {
       )
       .subscribe((response) => {
         this.token = response.token;
+        this.auth_status.next(true);
+        this.router.navigate(['/']);
       });
   }
 }
