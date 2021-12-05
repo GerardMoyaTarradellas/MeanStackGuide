@@ -24,6 +24,8 @@ export class PostListComponent implements OnInit, OnDestroy {
   public post_size_options: number[] = [1, 2, 5];
   /** Defines si el usuario esta autenticado */
   public user_authenticated: boolean = false;
+  /** Id del usuario */
+  public user_id: string;
 
   /** Pagina actual del paginador. */
   private current_page: number = 1;
@@ -49,6 +51,7 @@ export class PostListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.is_loading = true;
     this.post_service.getPosts(this.post_per_page, this.current_page);
+    this.user_id = this.auth_service.getUserId();
     this.posts_subscription = this.post_service
       .getPostUpdateListener()
       .subscribe((response) => {
@@ -60,6 +63,7 @@ export class PostListComponent implements OnInit, OnDestroy {
       .getAuthStatusListener()
       .subscribe((is_authenticated) => {
         this.user_authenticated = is_authenticated;
+        this.user_id = this.auth_service.getUserId();
       });
     this.user_authenticated = this.auth_service.getIsAuth();
   }

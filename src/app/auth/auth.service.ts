@@ -9,14 +9,16 @@ import { IAuth } from './auth.interface';
   providedIn: 'root',
 })
 export class AuthService {
-  /** Token del usuario */
-  private token: string = '';
   /** Define si se ha hecho el proceso de autenticación */
   private auth_status: Subject<boolean> = new Subject<boolean>();
   /** Define si el usuario esta autenticado */
   private is_authenticated: boolean = false;
   /** Timer del token */
   private timer: any;
+  /** Token del usuario */
+  private token: string = '';
+  /** Id del usuario logeado */
+  private user_id: string = '';
 
   /**
    * Constructor del servicio.
@@ -37,6 +39,7 @@ export class AuthService {
       if (expires_in > 0) {
         this.token = data.token;
         this.is_authenticated = true;
+        this.user_id = data.user_id;
         this.auth_status.next(true);
         this.setAuthTimer(expires_in);
         this.router.navigate(['/']);
@@ -72,11 +75,13 @@ export class AuthService {
   private getAuthData() {
     const token = localStorage.getItem('token');
     const expiration = localStorage.getItem('expiration');
+    const user_id = localStorage.getItem('user_id');
 
     if (token && expiration) {
       return {
         token: token,
         expiration: new Date(expiration),
+        user_id: user_id,
       };
     } else {
       return;
@@ -107,24 +112,34 @@ export class AuthService {
   }
 
   /**
+   * Devuelve el ID del usuario
+   */
+  public getUserId(): string {
+    return this.user_id;
+  }
+
+  /**
    * Logea al usuario.
    * @param user_data Datos del usuario.
    */
   public login(user_data: IAuth) {
     this.http_client
-      .post<{ message: string; token: string; expires_in: number }>(
-        'http://localhost:3000/api/user/login',
-        user_data
-      )
+      .post<{
+        message: string;
+        token: string;
+        expires_in: number;
+        user_id: string;
+      }>('http://localhost:3000/api/user/login', user_data)
       .subscribe((response) => {
         this.token = response.token;
         if (response.token) {
           this.is_authenticated = true;
+          this.user_id = response.user_id;
           this.setAuthTimer(response.expires_in);
           const expiration_date = new Date(
             new Date().getTime() + response.expires_in
           );
-          this.saveAuthData(this.token, expiration_date);
+          this.saveAuthData(this.token, expiration_date, this.user_id);
 
           this.auth_status.next(true);
           this.router.navigate(['/']);
@@ -137,6 +152,7 @@ export class AuthService {
    */
   public logOut() {
     this.token = null;
+    this.user_id = '';
     this.is_authenticated = false;
     this.auth_status.next(false);
     this.router.navigate(['/login']);
@@ -148,9 +164,10 @@ export class AuthService {
    * @param token Token del usuario.
    * @param expiration_date Fecha en que el token caduca.
    */
-  private saveAuthData(token: string, expiration_date: Date) {
+  private saveAuthData(token: string, expiration_date: Date, user_id: string) {
     localStorage.setItem('token', token);
     localStorage.setItem('expiration', expiration_date.toISOString());
+    localStorage.setItem('user_id', user_id);
   }
 
   /**
