@@ -4,6 +4,9 @@ import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 
 import { IAuth } from './auth.interface';
+import { environment } from 'src/environments/environment';
+
+const BACKEND_URL = environment.API_URL + '/user';
 
 @Injectable({
   providedIn: 'root',
@@ -45,7 +48,7 @@ export class AuthService {
         this.router.navigate(['/']);
       }
     }
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login']);
   }
 
   /**
@@ -62,16 +65,14 @@ export class AuthService {
    * @param user_data Datos del usuario.
    */
   public createUser(user_data: IAuth) {
-    return this.http_client
-      .post('http://localhost:3000/api/user/signup', user_data)
-      .subscribe(
-        () => {
-          this.router.navigate(['/']);
-        },
-        (error) => {
-          this.auth_status.next(false);
-        }
-      );
+    return this.http_client.post(BACKEND_URL + '/signup', user_data).subscribe(
+      () => {
+        this.router.navigate(['/']);
+      },
+      (error) => {
+        this.auth_status.next(false);
+      }
+    );
   }
 
   /**
@@ -135,7 +136,7 @@ export class AuthService {
         token: string;
         expires_in: number;
         user_id: string;
-      }>('http://localhost:3000/api/user/login', user_data)
+      }>(BACKEND_URL + '/login', user_data)
       .subscribe(
         (response) => {
           this.token = response.token;
@@ -166,7 +167,7 @@ export class AuthService {
     this.user_id = '';
     this.is_authenticated = false;
     this.auth_status.next(false);
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login']);
     clearTimeout(this.timer);
     this.clearAuthData();
   }

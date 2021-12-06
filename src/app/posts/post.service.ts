@@ -5,6 +5,9 @@ import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { IPost } from './post.interface';
+import { environment } from 'src/environments/environment';
+
+const BACKEND_URL = environment.API_URL + '/posts/';
 
 @Injectable({
   providedIn: 'root',
@@ -29,9 +32,7 @@ export class PostService {
    */
   public getPost(id: string): Observable<IPost | undefined> {
     return this.http_client
-      .get<{ message: string; post: any }>(
-        'http://localhost:3000/api/posts/' + id
-      )
+      .get<{ message: string; post: any }>(BACKEND_URL + id)
       .pipe(
         map((response: any) => {
           if (response.post) {
@@ -53,7 +54,7 @@ export class PostService {
     const query_params = `?page_size=${page_size}&page=${current_page}`;
     this.http_client
       .get<{ message: string; posts: any[]; max_posts: number }>(
-        'http://localhost:3000/api/posts' + query_params
+        BACKEND_URL + query_params
       )
       .pipe(
         map((data) => {
@@ -94,10 +95,7 @@ export class PostService {
     post_data.append('image', image, new_post.title);
 
     this.http_client
-      .post<{ message: string; post: any }>(
-        'http://localhost:3000/api/posts',
-        post_data
-      )
+      .post<{ message: string; post: any }>(BACKEND_URL, post_data)
       .subscribe(() => {
         this.router.navigate(['/']);
       });
@@ -108,9 +106,7 @@ export class PostService {
    * @param post Post que se desea eliminar.
    */
   public deleteOne(post: IPost) {
-    return this.http_client.delete<{ message: string }>(
-      'http://localhost:3000/api/posts/' + post.id
-    );
+    return this.http_client.delete<{ message: string }>(BACKEND_URL + post.id);
   }
 
   /**
@@ -147,10 +143,7 @@ export class PostService {
     }
 
     this.http_client
-      .put<{ message: string; post: any }>(
-        'http://localhost:3000/api/posts/' + post.id,
-        post_data
-      )
+      .put<{ message: string; post: any }>(BACKEND_URL + post.id, post_data)
       .subscribe(() => {
         this.router.navigate(['/']);
       });
