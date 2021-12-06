@@ -22,7 +22,11 @@ export class ErrorInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
-        this.mat_dialog.open(ErrorComponent);
+        this.mat_dialog.open(ErrorComponent, {
+          data: {
+            message: error.error.message ?? 'Error desconocido',
+          },
+        });
         return throwError(error);
       })
     );
