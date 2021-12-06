@@ -24,7 +24,7 @@ router.post("/signup", (req, res, next) => {
       .catch((err) => {
         console.log(err);
         res.status(500).json({
-          error: err,
+          message: "Las credenciales no son validas!",
         });
       });
   });
@@ -69,8 +69,8 @@ router.post("/login", (req, res, next) => {
       });
     })
     .catch((err) => {
-      return res.status(401).json({
-        message: "Error - " + err,
+      return res.status(500).json({
+        message: "Credenciales no válidas!",
       });
     });
 });

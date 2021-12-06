@@ -81,9 +81,14 @@ export class PostListComponent implements OnInit, OnDestroy {
    * @param post Post que se desea eliminar.
    */
   public onDelete(post: IPost) {
-    this.post_service.deleteOne(post).subscribe(() => {
-      this.post_service.getPosts(this.post_per_page, this.current_page);
-    });
+    this.post_service.deleteOne(post).subscribe(
+      () => {
+        this.post_service.getPosts(this.post_per_page, this.current_page);
+      },
+      (error) => {
+        this.is_loading = false;
+      }
+    );
   }
 
   /**

@@ -41,13 +41,20 @@ router.post(
       image_path: url + "/images/" + req.file.filename,
       creator: req.user_data.user_id,
     });
-    post.save().then((post) => {
-      console.log("Post creado -> " + post._id);
-      res.status(201).json({
-        message: "Post creado!",
-        post: post,
+    post
+      .save()
+      .then((post) => {
+        console.log("Post creado -> " + post._id);
+        res.status(201).json({
+          message: "Post creado!",
+          post: post,
+        });
+      })
+      .catch((error) => {
+        res.status(500).json({
+          message: "El post no se ha creado",
+        });
       });
-    });
   }
 );
 
@@ -74,32 +81,43 @@ router.get("", (req, res, next) => {
         posts: bd_posts,
         max_posts: count,
       });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "No se han podido obtener los posts",
+      });
     });
 });
 
 /** Obtiene un único post. */
 router.get("/:id", (req, res, next) => {
-  Post.findById(req.params.id).then((post) => {
-    if (post) {
-      console.log("Post encontrado -> " + post._id);
-      res.status(200).json({
-        message: "Post leído",
-        post: post,
+  Post.findById(req.params.id)
+    .then((post) => {
+      if (post) {
+        console.log("Post encontrado -> " + post._id);
+        res.status(200).json({
+          message: "Post leído",
+          post: post,
+        });
+      } else {
+        console.log("Post no encontrado");
+        res.status(404).json({
+          message: "Post no encontrado",
+          post: undefined,
+        });
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "No se ha podido obtener el post",
       });
-    } else {
-      console.log("Post no encontrado");
-      res.status(404).json({
-        message: "Post no encontrado",
-        post: undefined,
-      });
-    }
-  });
+    });
 });
 
 /** Eliminación de un post */
 router.delete("/:id", auth, (req, res, next) => {
-  Post.deleteOne({ _id: req.params.id, creator: req.user_data.user_id }).then(
-    (result) => {
+  Post.deleteOne({ _id: req.params.id, creator: req.user_data.user_id })
+    .then((result) => {
       if (result.deletedCount > 0) {
         console.log("Post eliminado");
         res.status(200).json({
@@ -112,8 +130,12 @@ router.delete("/:id", auth, (req, res, next) => {
           post: null,
         });
       }
-    }
-  );
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "No se ha podido eliminar el post",
+      });
+    });
 });
 
 /** Eliminación de un post */
@@ -129,21 +151,27 @@ router.put(
     Post.updateOne(
       { _id: req.params.id, creator: req.user_data.user_id },
       req.body
-    ).then((result) => {
-      if (result.modifiedCount > 0) {
-        console.log("Post editado");
-        res.status(200).json({
-          message: "Post modificado",
-          post: req.body,
+    )
+      .then((result) => {
+        if (result.modifiedCount > 0) {
+          console.log("Post editado");
+          res.status(200).json({
+            message: "Post modificado",
+            post: req.body,
+          });
+        } else {
+          console.log("Post no editado -> Desautorizado");
+          res.status(401).json({
+            message: "Not authorized!",
+            post: null,
+          });
+        }
+      })
+      .catch((error) => {
+        res.status(500).json({
+          message: "El post no se ha actualizado",
         });
-      } else {
-        console.log("Post no editado -> Desautorizado");
-        res.status(401).json({
-          message: "Not authorized!",
-          post: null,
-        });
-      }
-    });
+      });
   }
 );
 
