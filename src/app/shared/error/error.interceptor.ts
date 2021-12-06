@@ -4,14 +4,25 @@ import {
   HttpInterceptor,
   HttpRequest,
 } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
+import { ErrorComponent } from './error.component';
+
+@Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
+  /**
+   * Constructor del interceptor.
+   * @param mat_dialog Servicio de dialogos de material
+   */
+  constructor(private mat_dialog: MatDialog) {}
+
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
-        alert(error.error.message);
+        this.mat_dialog.open(ErrorComponent);
         return throwError(error);
       })
     );

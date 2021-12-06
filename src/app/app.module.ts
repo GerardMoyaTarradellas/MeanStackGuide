@@ -10,6 +10,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -19,7 +20,8 @@ import { PostListComponent } from './posts/post-list/post-list.component';
 import { LoginComponent } from './auth/login/login.component';
 import { SignupComponent } from './auth/signup/signup.component';
 import { AuthInterceptor } from './auth/auth.interceptor';
-import { ErrorInterceptor } from './shared/error.interceptor';
+import { ErrorInterceptor } from './shared/error/error.interceptor';
+import { ErrorComponent } from './shared/error/error.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +31,7 @@ import { ErrorInterceptor } from './shared/error.interceptor';
     PostListComponent,
     LoginComponent,
     SignupComponent,
+    ErrorComponent,
   ],
   imports: [
     BrowserModule,
@@ -45,6 +48,7 @@ import { ErrorInterceptor } from './shared/error.interceptor';
     MatExpansionModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
+    MatDialogModule,
   ],
   providers: [
     {
@@ -59,5 +63,6 @@ import { ErrorInterceptor } from './shared/error.interceptor';
     },
   ],
   bootstrap: [AppComponent],
+  entryComponents: [ErrorComponent],
 })
 export class AppModule {}
