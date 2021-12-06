@@ -11,7 +11,6 @@ import { AuthInterceptor } from './auth/auth.interceptor';
 import { ErrorInterceptor } from './shared/error/error.interceptor';
 import { ErrorComponent } from './shared/error/error.component';
 import { PostsModule } from './posts/posts.module';
-import { AuthModule } from './auth/auth.module';
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent, ErrorComponent],
@@ -24,7 +23,6 @@ import { AuthModule } from './auth/auth.module';
     MaterialModule,
 
     PostsModule,
-    AuthModule,
   ],
   providers: [
     {
