@@ -1,19 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 
 import { IPost } from '../post.interface';
 import { PostService } from '../post.service';
 import { mimeType } from '../../utils/validators/mime-type.validator';
+import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-post-create',
   templateUrl: './post-create.component.html',
   styleUrls: ['./post-create.component.css'],
 })
-export class PostCreateComponent implements OnInit {
+export class PostCreateComponent implements OnInit, OnDestroy {
   /** Modo del componente. */
   private mode: 'creation' | 'edition';
+  /** Subscripción de la autenticación */
+  private auth_subscription: Subscription;
 
   /** Define si el componente esta cargando o no. */
   public is_loading: boolean = false;
@@ -31,6 +35,7 @@ export class PostCreateComponent implements OnInit {
    */
   constructor(
     private post_service: PostService,
+    private auth_service: AuthService,
     public router: ActivatedRoute
   ) {}
 
@@ -38,6 +43,11 @@ export class PostCreateComponent implements OnInit {
    * Se llama cada vez que el componente se inicializa
    */
   ngOnInit(): void {
+    this.auth_subscription = this.auth_service
+      .getAuthStatusListener()
+      .subscribe((auth_status) => {
+        this.is_loading = false;
+      });
     this.createForm();
     this.router.paramMap.subscribe((param_map: ParamMap) => {
       if (param_map.has('id')) {
@@ -60,6 +70,13 @@ export class PostCreateComponent implements OnInit {
         this.mode = 'creation';
       }
     });
+  }
+
+  /**
+   * Se llama al destruir el componente.
+   */
+  ngOnDestroy() {
+    this.auth_subscription.unsubscribe();
   }
 
   /**
