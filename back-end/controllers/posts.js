@@ -63,6 +63,12 @@ exports.editPost = (req, res, next) => {
           message: "Post modificado",
           post: req.body,
         });
+      } else if (result.matchedCount > 0) {
+        console.log("Post no editado por ser igual que el original");
+        res.status(200).json({
+          message: "Post no editado por ser igual que el original",
+          post: req.body,
+        });
       } else {
         console.log("Post no editado -> Desautorizado");
         res.status(401).json({
