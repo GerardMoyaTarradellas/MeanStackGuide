@@ -10,7 +10,9 @@ const app = express();
 
 mongoose
   .connect(
-    "mongodb+srv://gerard:rPwswr21jZVN536A@cluster0.jcdal.mongodb.net/mean-course?retryWrites=true&w=majority"
+    "mongodb+srv://gerard:" +
+      process.env.MONGO_PASS +
+      "@cluster0.jcdal.mongodb.net/mean-course?retryWrites=true&w=majority"
   )
   .then(() => {
     console.log("Conectado a mongo!");
